@@ -38,19 +38,21 @@ public class ObjectSummonPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(removeOnCollision(e.getX(), e.getY())) {
+        final int x = e.getX();
+        final int y = e.getY();
+
+        if(removeOnCollision(x, y)) {
             repaint();
             return;
         }
-        var label = new JLabel(String.format("x:%d - y:%d", e.getX(), e.getY()));
+        var label = new JLabel(String.format("x:%d - y:%d", x, y));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
         label.setSize(50, 50);
-        label.setLocation(e.getX(), e.getY());
+        label.setLocation(x, y);
         objects.add(label);
         repaint();
     }
-
     @Override
     public void mousePressed(MouseEvent e) {
 
