@@ -13,6 +13,20 @@ public class ObjectSummonPanel extends JPanel implements MouseListener {
         this.addMouseListener(this);
     }
 
+    private boolean removeOnCollision(int x, int y)
+    {
+        boolean isRemoved = false;
+        ArrayList<JLabel> toDelete = new ArrayList<>();
+        for (var item: objects) {
+            if(Math.abs(item.getX() - x) < 15 && Math.abs(item.getY() - y) < 15){
+                toDelete.add(item);
+                isRemoved = true;
+            }
+        }
+        objects.removeAll(toDelete);
+        return isRemoved;
+    }
+
     @Override
     public void paint(Graphics g) {
         for (var label: objects) {
@@ -24,6 +38,10 @@ public class ObjectSummonPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(removeOnCollision(e.getX(), e.getY())) {
+            repaint();
+            return;
+        }
         var label = new JLabel(String.format("x:%d - y:%d", e.getX(), e.getY()));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         label.setVerticalAlignment(SwingConstants.CENTER);
