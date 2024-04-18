@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class ObjectSummonPanel extends JPanel implements MouseListener {
     ArrayList<JLabel> objects;
+    boolean isDragged = false;
+    ArrayList<JLabel> dragging;
 
     ObjectSummonPanel()
     {
@@ -13,17 +15,41 @@ public class ObjectSummonPanel extends JPanel implements MouseListener {
         this.addMouseListener(this);
     }
 
-    private boolean removeOnCollision(int x, int y)
+    private ArrayList<JLabel> getCollision(int x, int y)
     {
-        boolean isRemoved = false;
-        ArrayList<JLabel> toDelete = new ArrayList<>();
+        ArrayList<JLabel> collided = new ArrayList<>();
         for (var item: objects) {
             if(Math.abs(item.getX() - x) < 15 && Math.abs(item.getY() - y) < 15){
-                toDelete.add(item);
-                isRemoved = true;
+                collided.add(item);
             }
         }
-        objects.removeAll(toDelete);
+        return collided;
+    }
+
+    private boolean dragOnCollision(int x2, int y2)
+    {
+        ArrayList<JLabel> toDrag = dragging;
+        if(!toDrag.isEmpty())
+        {
+            isDragged = true;
+            for (var item: toDrag) {
+                var newPos = new Point(x2,y2);
+                item.setLocation(newPos);
+            }
+        }
+        return isDragged;
+    }
+
+    private boolean removeOnCollision(int x, int y)
+    {
+        if(isDragged)
+            return false;
+        boolean isRemoved = false;
+        ArrayList<JLabel> toDelete = getCollision(x, y);
+        if(!toDelete.isEmpty()) {
+            objects.removeAll(toDelete);
+            isRemoved = true;
+        }
         return isRemoved;
     }
 
@@ -55,11 +81,19 @@ public class ObjectSummonPanel extends JPanel implements MouseListener {
     }
     @Override
     public void mousePressed(MouseEvent e) {
-
+        final int x = e.getX();
+        final int y = e.getY();
+        dragging = getCollision(x, y);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        final int x = e.getX();
+        final int y = e.getY();
+        if(dragOnCollision(x, y))
+        {
+            repaint();
+        }
 
     }
 
